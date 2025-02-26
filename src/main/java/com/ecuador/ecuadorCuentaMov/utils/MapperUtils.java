@@ -9,7 +9,6 @@ import com.ecuador.ecuadorCuentaMov.domains.entities.Movimiento;
 
 public class MapperUtils {
 
-    // Métodos para Cliente (los originales)
     public static Cliente convertirDtoACliente(ClienteDTO dto) {
         return Cliente.builder()
                 .id(dto.getId())

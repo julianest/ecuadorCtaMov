@@ -8,7 +8,6 @@ import com.ecuador.ecuadorCuentaMov.domains.repositories.ClienteRepository;
 import com.ecuador.ecuadorCuentaMov.domains.repositories.CuentaRepository;
 import com.ecuador.ecuadorCuentaMov.domains.services.CuentaService;
 import com.ecuador.ecuadorCuentaMov.domains.services.ClienteService;
-import com.ecuador.ecuadorCuentaMov.utils.MapperUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +32,6 @@ public class CuentaServiceImpl implements CuentaService {
         this.clienteRepository = clienteRepository;
         this.clienteService = clienteService;
     }
-
-    // Mantener los métodos existentes...
 
     @Override
     @Transactional(readOnly = true)

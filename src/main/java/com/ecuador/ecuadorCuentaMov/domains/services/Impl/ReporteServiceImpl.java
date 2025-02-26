@@ -64,7 +64,6 @@ public class ReporteServiceImpl implements ReporteService {
         List<ReporteDTO.CuentaReporteDTO> cuentasReporte = new ArrayList<>();
 
         for (Cuenta cuenta : cuentas) {
-            // Obtener los movimientos de esta cuenta (si existen)
             List<Movimiento> movimientosCuenta = movimientosPorCuenta.getOrDefault(cuenta.getId(), new ArrayList<>());
 
             // Calcular saldo actual

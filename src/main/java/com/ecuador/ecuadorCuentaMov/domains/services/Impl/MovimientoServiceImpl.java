@@ -65,12 +65,10 @@ public class MovimientoServiceImpl implements MovimientoService {
         double valorMovimiento = movimientoDTO.getValor();
         double nuevoSaldo = saldoActual + valorMovimiento;
         
-        // Verificar si hay saldo suficiente para retiros (valores negativos)
         if (valorMovimiento < 0 && nuevoSaldo < 0) {
             throw new SaldoNoDisponibleException("Saldo no disponible");
         }
         
-        // Crear y guardar el movimiento
         Movimiento movimiento = Movimiento.builder()
                 .fecha(LocalDateTime.now())
                 .tipoMovimiento(valorMovimiento > 0 ? "DEPOSITO" : "RETIRO")
@@ -117,11 +115,8 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     @Transactional
     public Optional<MovimientoDTO> actualizarMovimiento(Long id, MovimientoDTO movimientoDTO) {
-        // En este caso, por la naturaleza de los movimientos bancarios, 
-        // solo permitimos actualizar ciertos campos no críticos
         return movimientoRepository.findById(id)
                 .map(movimientoExistente -> {
-                    // Solo actualizamos el tipo de movimiento si es necesario
                     if (movimientoDTO.getTipoMovimiento() != null) {
                         movimientoExistente.setTipoMovimiento(movimientoDTO.getTipoMovimiento());
                     }
@@ -134,8 +129,6 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     @Transactional
     public boolean eliminarMovimiento(Long id) {
-        // En un sistema real, probablemente querríamos restricciones 
-        // adicionales antes de permitir eliminar un movimiento
         if (movimientoRepository.existsById(id)) {
             movimientoRepository.deleteById(id);
             return true;
