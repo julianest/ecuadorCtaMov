@@ -5,6 +5,7 @@ import com.ecuador.ecuadorCuentaMov.domains.dtos.ReporteMovimientoDTO;
 import com.ecuador.ecuadorCuentaMov.domains.services.CuentaService;
 import com.ecuador.ecuadorCuentaMov.domains.services.MovimientoService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,33 +19,22 @@ public class ReporteController {
 
     private final CuentaService cuentaService;
     private final MovimientoService movimientoService;
-    
+
     @GetMapping("/cuentas")
-    public ResponseEntity<List<ReporteCuentaDTO>> reporteCuentas() {
-        return ResponseEntity.ok(cuentaService.generarReporteCuentas());
+    public ResponseEntity<?> reporteCuentas() {
+        List<ReporteCuentaDTO> cuentas = cuentaService.generarReporteCuentas();
+        if (cuentas.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reporte de cuentas no encontrado.");
+        }
+        return ResponseEntity.ok(cuentas);
     }
-    
-    @PostMapping("/cuentas")
-    public ResponseEntity<ReporteCuentaDTO> crearCuenta(@RequestBody Map<String, Object> request) {
-        String nombreCliente = (String) request.get("nombreCliente");
-        String tipoCuenta = (String) request.get("tipoCuenta");
-        Double saldoInicial = Double.valueOf(request.get("saldoInicial").toString());
-        
-        ReporteCuentaDTO cuenta = cuentaService.crearCuentaParaCliente(nombreCliente, tipoCuenta, saldoInicial);
-        return ResponseEntity.ok(cuenta);
-    }
-    
-    @PostMapping("/movimientos")
-    public ResponseEntity<ReporteMovimientoDTO> realizarMovimiento(@RequestBody Map<String, Object> request) {
-        String numeroCuenta = (String) request.get("numeroCuenta");
-        Double valor = Double.valueOf(request.get("valor").toString());
-        
-        ReporteMovimientoDTO movimiento = movimientoService.registrarMovimientoReporte(numeroCuenta, valor);
-        return ResponseEntity.ok(movimiento);
-    }
-    
+
     @GetMapping("/movimientos/{numeroCuenta}")
-    public ResponseEntity<List<ReporteMovimientoDTO>> reporteMovimientos(@PathVariable String numeroCuenta) {
-        return ResponseEntity.ok(movimientoService.listarMovimientosPorNumeroCuenta(numeroCuenta));
+    public ResponseEntity<?> reporteMovimientos(@PathVariable String numeroCuenta) {
+        List<ReporteMovimientoDTO> movimientos = movimientoService.listarMovimientosPorNumeroCuenta(numeroCuenta);
+        if (movimientos.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reporte de movimientos no encontrado para la cuenta: " + numeroCuenta);
+        }
+        return ResponseEntity.ok(movimientos);
     }
 }

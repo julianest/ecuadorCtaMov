@@ -1,5 +1,6 @@
 package com.ecuador.ecuadorCuentaMov.domains.entities;
 
+import com.ecuador.ecuadorCuentaMov.utils.TipoMov;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,7 +24,7 @@ public class Movimiento {
     private LocalDateTime fecha;
 
     @Column(name = "tipo_movimiento", nullable = false, length = 50)
-    private String tipoMovimiento;
+    private TipoMov tipoMovimiento;
 
     @Column(nullable = false)
     private Double valor;
