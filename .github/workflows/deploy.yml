@@ -44,7 +44,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag Docker Image
-        run: docker tag ecu_bank_mov:v1.0.0 ghcr.io/${{ github.repository_owner }}/ecu_bank_mov:v1.0.0
+        run: docker tag ecuadorCuentaMov:v1.0.0 ghcr.io/${{ github.repository_owner }}/ecuadorCuentaMov:v1.0.0
 
       - name: Push Docker Image to GHCR
-        run: docker push ghcr.io/${{ github.repository_owner }}/ecu_bank_mov:v1.0.0
+        run: docker push ghcr.io/${{ github.repository_owner }}/ecuadorCuentaMov:v1.0.0

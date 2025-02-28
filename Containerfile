@@ -13,8 +13,8 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/ecu_bank_mov-1.0.0.jar /app/ecu_bank_mov.jar
+COPY --from=build /app/build/libs/ecuadorCuentaMov-1.0.0.jar /app/ecuadorCuentaMov.jar
 
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "ecu_bank_mov.jar"]
+ENTRYPOINT ["java", "-jar", "ecuadorCuentaMov.jar"]
