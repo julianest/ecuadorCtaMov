@@ -6,5 +6,5 @@ import java.time.LocalDateTime;
 
 public interface ReporteService {
     
-    EstadoCuentaDTO generarEstadoCuenta(Long clienteId, LocalDateTime fechaInicio, LocalDateTime fechaFin);
+   // EstadoCuentaDTO generarEstadoCuenta(Long clienteId, LocalDateTime fechaInicio, LocalDateTime fechaFin);
 }

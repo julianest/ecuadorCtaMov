@@ -2,7 +2,7 @@ name: Api_EcuadorBankMovCuenta
 
 on:
   push:
-    branches: [ "main","develop" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:

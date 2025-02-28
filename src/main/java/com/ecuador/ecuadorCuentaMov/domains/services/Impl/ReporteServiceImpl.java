@@ -41,45 +41,4 @@ public class ReporteServiceImpl implements ReporteService {
         this.movimientoRepository = movimientoRepository;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public EstadoCuentaDTO generarEstadoCuenta(Long clienteId, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
-        // Obtener el cliente
-        ClienteDTO cliente =  clienteService.buscarClientePorId(clienteId);
-        if (cliente == null) {
-            throw new IllegalArgumentException("Cliente no encontrado: " + clienteId);
-        }
-
-        // Obtener todos los movimientos del cliente en el rango de fechas
-        List<Movimiento> movimientos = movimientoRepository.findByCuentaClienteIdAndFechaBetweenOrderByFechaDesc(
-                clienteId, fechaInicio, fechaFin);
-
-        // Convertir movimientos a DTOs usando MapperUtils
-        List<MovimientoDTO> movimientosDTO = movimientos.stream()
-                .map(MapperUtils::convertirMovimientoADto)
-                .collect(Collectors.toList());
-
-        // Calcular saldo total de todas las cuentas
-//        Double saldoTotal = cuentas.stream()
-//                .mapToDouble(cuenta -> {
-//                    // Obtener último movimiento de la cuenta en el rango de fechas, si existe
-//                    return movimientos.stream()
-//                            .filter(m -> m.getCuenta().getId().equals(cuenta.getId()))
-//                            .max((m1, m2) -> m1.getFecha().compareTo(m2.getFecha()))
-//                            .map(Movimiento::getSaldo)
-//                            .orElse(cuenta.getSaldoInicial());
-//                })
-//                .sum();
-//
-//        // Crear el DTO del reporte de estado de cuenta
-//        return EstadoCuentaDTO.builder()
-//                .cliente(clienteDTO)
-//                .cuentas(cuentasDTO)
-//                .movimientos(movimientosDTO)
-//                .fechaInicio(fechaInicio)
-//                .fechaFin(fechaFin)
-//                .saldoTotal(saldoTotal)
-//                .build();
-        return null;
-    }
 }

@@ -1,14 +1,12 @@
 package com.ecuador.ecuadorCuentaMov.utils;
 
-import com.ecuador.ecuadorCuentaMov.domains.dtos.ClienteDTO;
-import com.ecuador.ecuadorCuentaMov.domains.dtos.CuentaDTO;
-import com.ecuador.ecuadorCuentaMov.domains.dtos.MovimientoDTO;
-import com.ecuador.ecuadorCuentaMov.domains.dtos.ReporteCuentaDTO;
+import com.ecuador.ecuadorCuentaMov.domains.dtos.*;
 import com.ecuador.ecuadorCuentaMov.domains.entities.Cuenta;
 import com.ecuador.ecuadorCuentaMov.domains.entities.Movimiento;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 public class MapperUtils {
@@ -35,12 +33,17 @@ public ReporteCuentaDTO builderReporteCuentaDTO(Cuenta cuentaGuardada){
 }
 
 public Movimiento buildMovimiento(MovimientoDTO movimientoDTO, Cuenta cuenta){
+    String movimientoDetalle = movimientoDTO.getTipoMovimiento() +" de "+ movimientoDTO.getValor();
     return Movimiento.builder()
             .fecha(LocalDateTime.now())
+            .tipoCuenta(TipoCuenta.valueOf(cuenta.getTipoCuenta()))
             .tipoMovimiento(movimientoDTO.getTipoMovimiento())
-            .valor(movimientoDTO.getValor())
+            .valor(Math.abs(movimientoDTO.getValor()))
             .saldo(movimientoDTO.getSaldo())
+            .estado(true)
             .cuenta(cuenta)
+            .numeroCuenta(movimientoDTO.getNumeroCuenta())
+            .movimientoDetalle(movimientoDetalle)
             .build();
 }
 
@@ -52,66 +55,6 @@ public MovimientoDTO buildMovimientoDTO(String numeroCuenta,Double valor,TipoMov
             .valor(valor)
             .build();
 }
-
-//    public static Cliente convertirDtoACliente(ClienteDTO dto) {
-//        return Cliente.builder()
-//                .clienteId(dto.getId())
-//                .nombre(dto.getNombre())
-//                .genero(dto.getGenero())
-//                .edad(dto.getEdad())
-//                .identificacion(dto.getIdentificacion())
-//                .direccion(dto.getDireccion())
-//                .telefono(dto.getTelefono())
-//                .clienteId(dto.getClienteId())
-//                .contraseña(dto.getContraseña())
-//                .estado(dto.getEstado() != null ? dto.getEstado() : true)
-//                .build();
-//    }
-
-//    public static ClienteDTO convertirClienteADto(Cliente entidad) {
-//        return ClienteDTO.builder()
-//                .id(entidad.getId())
-//                .nombre(entidad.getNombre())
-//                .genero(entidad.getGenero())
-//                .edad(entidad.getEdad())
-//                .identificacion(entidad.getIdentificacion())
-//                .direccion(entidad.getDireccion())
-//                .telefono(entidad.getTelefono())
-//                .clienteId(entidad.getClienteId())
-//                .contraseña(entidad.getContraseña())
-//                .estado(entidad.getEstado())
-//                .build();
-//    }
-
-//    public static void actualizarClienteDesdeDTO(Cliente cliente, ClienteDTO dto) {
-//        if (dto.getNombre() != null) {
-//            cliente.setNombre(dto.getNombre());
-//        }
-//        if (dto.getGenero() != null) {
-//            cliente.setGenero(dto.getGenero());
-//        }
-//        if (dto.getEdad() > 0) {
-//            cliente.setEdad(dto.getEdad());
-//        }
-//        if (dto.getIdentificacion() != null) {
-//            cliente.setIdentificacion(dto.getIdentificacion());
-//        }
-//        if (dto.getDireccion() != null) {
-//            cliente.setDireccion(dto.getDireccion());
-//        }
-//        if (dto.getTelefono() != null) {
-//            cliente.setTelefono(dto.getTelefono());
-//        }
-//        if (dto.getClienteId() != null) {
-//            cliente.setClienteId(dto.getClienteId());
-//        }
-//        if (dto.getContraseña() != null) {
-//            cliente.setContraseña(dto.getContraseña());
-//        }
-//        if (dto.getEstado() != null) {
-//            cliente.setEstado(dto.getEstado());
-//        }
-//    }
 
     // Métodos para Cuenta
 //    public static Cuenta convertirDtoACuenta(CuentaDTO dto, Cuenta cuenta) {
@@ -125,17 +68,17 @@ public MovimientoDTO buildMovimientoDTO(String numeroCuenta,Double valor,TipoMov
 //                .build();
 //    }
 
-//    public static CuentaDTO convertirCuentaADto(Cuenta entidad) {
-//        return CuentaDTO.builder()
-//                .id(entidad.getId())
-//                .numeroCuenta(entidad.getNumeroCuenta())
-//                .tipoCuenta(entidad.getTipoCuenta())
-//                .saldoInicial(entidad.getSaldoInicial())
-//                .estado(entidad.getEstado())
-//                .clienteId(entidad.getCliente().getId())
-//                .clienteNombre(entidad.getCliente().getNombre())
-//                .build();
-//    }
+    public static CuentaDTO convertirCuentaADto(Cuenta entidad) {
+        return CuentaDTO.builder()
+                .id(entidad.getId())
+                .numeroCuenta(entidad.getNumeroCuenta())
+                .tipoCuenta(entidad.getTipoCuenta())
+                .saldoInicial(entidad.getSaldoInicial())
+                .estado(entidad.getEstado())
+                //.clienteId(entidad.getCliente().getId())
+                .clienteNombre(entidad.getClienteNombre())
+                .build();
+    }
 
 //    public static void actualizarCuentaDesdeDTO(Cuenta cuenta, CuentaDTO dto, Cliente cliente) {
 //        if (dto.getNumeroCuenta() != null) {
@@ -161,10 +104,23 @@ public MovimientoDTO buildMovimientoDTO(String numeroCuenta,Double valor,TipoMov
                 .id(movimiento.getId())
                 .fecha(movimiento.getFecha())
                 .tipoMovimiento(movimiento.getTipoMovimiento())
+                .tipoCuenta(movimiento.getTipoCuenta())
                 .valor(movimiento.getValor())
                 .saldo(movimiento.getSaldo())
-                //.cuentaId(movimiento.getCuenta().getId())
+                .cuentaId(movimiento.getCuenta().getId())
                 .numeroCuenta(movimiento.getCuenta().getNumeroCuenta())
+                .build();
+    }
+
+    public static ReporteMovimientoDTO convertirMovimientoADtoReporte(Movimiento movimiento, Double saldoInicial) {
+        return ReporteMovimientoDTO.builder()
+                .numeroCuenta(movimiento.getNumeroCuenta())
+                .tipo(String.valueOf(movimiento.getTipoCuenta()))
+                .saldoInicial(saldoInicial) // Se usa el saldo acumulado antes de este movimiento
+                .saldoDisponible(saldoInicial + movimiento.getValor()) // Se actualiza el saldo
+                .estado(movimiento.getEstado())
+                .movimiento(movimiento.getMovimientoDetalle())
+                .fecha(movimiento.getFecha())
                 .build();
     }
 }

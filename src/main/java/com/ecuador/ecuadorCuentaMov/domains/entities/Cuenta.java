@@ -32,4 +32,5 @@ public class Cuenta {
 
     @Column(name = "cliente_nombre", nullable = false)
     private String clienteNombre;
+
 }

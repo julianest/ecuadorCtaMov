@@ -35,7 +35,7 @@ public class ClienteService {
     }
     
     public ClienteDTO buscarClientePorId(Long id) {
-        String url = clienteServiceUrl + "/" + id;
+        String url = clienteServiceUrl + "/id/" + id;
         try {
             return restTemplate.getForObject(url, ClienteDTO.class);
         } catch (Exception e) {

@@ -11,11 +11,13 @@ import com.ecuador.ecuadorCuentaMov.domains.services.ClienteService;
 import com.ecuador.ecuadorCuentaMov.domains.services.MovimientoService;
 import com.ecuador.ecuadorCuentaMov.exceptions.SaldoNoDisponibleException;
 import com.ecuador.ecuadorCuentaMov.utils.MapperUtils;
+import com.ecuador.ecuadorCuentaMov.utils.TipoMov;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,21 +41,17 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Transactional
     public MovimientoDTO registrarMovimiento(MovimientoDTO movimientoDTO) {
         Cuenta cuenta = cuentaRepository.findByNumeroCuenta(movimientoDTO.getNumeroCuenta())
-                .orElseThrow(() -> new IllegalArgumentException("La cuenta con ID " +
-                        movimientoDTO.getNumeroCuenta() + " no existe"));
-
+                .orElseThrow(() -> new IllegalArgumentException("La cuenta con ID " + movimientoDTO.getNumeroCuenta() + " no existe"));
 
         double saldoActual = cuenta.getSaldoInicial();
 
         // Obtener el último movimiento para tener el saldo más actualizado
         List<Movimiento> movimientosRecientes = movimientoRepository.findByCuentaId(cuenta.getId());
-        if (!movimientosRecientes.isEmpty()) {
-            // Ordenar por fecha descendente y tomar el más reciente
+
+        if (!movimientosRecientes.isEmpty()) {             // Ordenar por fecha descendente y tomar el más reciente
             saldoActual = movimientosRecientes.stream()
                     .sorted((m1, m2) -> m2.getFecha().compareTo(m1.getFecha()))
-                    .findFirst()
-                    .get()
-                    .getSaldo();
+                    .findFirst().get().getSaldo();
         }
 
         // Calcular nuevo saldo
@@ -62,6 +60,7 @@ public class MovimientoServiceImpl implements MovimientoService {
         if (valorMovimiento < 0 && nuevoSaldo < 0) {
             throw new SaldoNoDisponibleException("Saldo no disponible");
         }
+        movimientoDTO.setValor(movimientoDTO.getValor());
         movimientoDTO.setSaldo(nuevoSaldo);
         Movimiento movimiento = mapperUtils.buildMovimiento(movimientoDTO, cuenta);
 
@@ -128,17 +127,15 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     @Transactional(readOnly = true)
     public EstadoCuentaDTO generarEstadoCuenta(Long clienteId, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
-        // Obtener cliente
         ClienteDTO cliente = clienteService.buscarClientePorId(clienteId);
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente no encontrado: " + clienteId);
         }
 
-
         // Obtener cuentas del cliente
-//        List<CuentaDTO> cuentas = cuentaRepository.findByClienteId(clienteId).stream()
-//                .map(MapperUtils::convertirCuentaADto)
-//                .collect(Collectors.toList());
+        List<CuentaDTO> cuentas = cuentaRepository.findByClienteId(clienteId).stream()
+                .map(MapperUtils::convertirCuentaADto)
+                .collect(Collectors.toList());
 
         // Obtener movimientos en el rango de fechas
         List<MovimientoDTO> movimientos = movimientoRepository
@@ -147,27 +144,41 @@ public class MovimientoServiceImpl implements MovimientoService {
                 .collect(Collectors.toList());
 
         // Calcular saldo total
-//        double saldoTotal = cuentas.stream()
-//                .mapToDouble(cuenta -> cuenta.getSaldoInicial())
-//                .sum();
-//
-//        // Crear DTO de cliente
-//        ClienteDTO clienteDTO = MapperUtils.convertirClienteADto(cliente);
-//
-//        return EstadoCuentaDTO.builder()
-//                .cliente(clienteDTO)
-//                .cuentas(cuentas)
-//                .movimientos(movimientos)
-//                .fechaInicio(fechaInicio)
-//                .fechaFin(fechaFin)
-//                .saldoTotal(saldoTotal)
-//                .build();
-        return null;
+        double saldoTotal = cuentas.stream()
+                .mapToDouble(cuenta -> cuenta.getSaldoInicial())
+                .sum();
+
+        return EstadoCuentaDTO.builder()
+                .cliente(cliente)
+                .cuentas(cuentas)
+                .movimientos(movimientos)
+                .fechaInicio(fechaInicio)
+                .fechaFin(fechaFin)
+                .saldoTotal(saldoTotal)
+                .build();
     }
 
-
+    @Transactional(readOnly = true)
     @Override
     public List<ReporteMovimientoDTO> listarMovimientosPorNumeroCuenta(String numeroCuenta) {
-        return List.of();
+        List<Movimiento> movimientos = movimientoRepository.findByNumeroCuentaOrderByFechaAsc(numeroCuenta);
+
+        if (movimientos.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final Double[] saldoDisponible = {movimientos.get(0).getCuenta().getSaldoInicial()};
+        return movimientos.stream()
+                .map(movimiento -> {
+                    if (TipoMov.RETIRO.equals(movimiento.getTipoMovimiento())) {
+                        saldoDisponible[0] -= movimiento.getValor();
+                    } else {
+                        saldoDisponible[0] += movimiento.getValor();
+                    }
+
+                    return MapperUtils.convertirMovimientoADtoReporte(movimiento, saldoDisponible[0]);
+                })
+                .collect(Collectors.toList());
     }
+
 }

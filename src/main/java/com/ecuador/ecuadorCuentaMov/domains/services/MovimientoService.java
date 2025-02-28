@@ -12,9 +12,6 @@ import java.util.Optional;
 public interface MovimientoService {
 
     MovimientoDTO registrarMovimiento(MovimientoDTO movimientoDTO);
-    //<MovimientoDTO> registrarMovimientos(List<MovimientoDTO> movimientos);
-
-   // List<MovimientoDTO> registrarMovimiento(String numeroCuenta, Double valor, TipoMov tipoMovimiento);
     Optional<MovimientoDTO> obtenerMovimientoPorId(Long id);
     List<MovimientoDTO> listarTodosLosMovimientos();
     List<MovimientoDTO> listarMovimientosPorCuentaId(Long cuentaId);
@@ -22,6 +19,5 @@ public interface MovimientoService {
     Optional<MovimientoDTO> actualizarMovimiento(Long id, MovimientoDTO movimientoDTO);
     boolean eliminarMovimiento(Long id);
     EstadoCuentaDTO generarEstadoCuenta(Long clienteId, LocalDateTime fechaInicio, LocalDateTime fechaFin);
-    //ReporteMovimientoDTO registrarMovimientoReporte(String numeroCuenta, Double valor);
     List<ReporteMovimientoDTO> listarMovimientosPorNumeroCuenta(String numeroCuenta);
 }
