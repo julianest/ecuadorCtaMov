@@ -12,6 +12,9 @@ java {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
+jar {
+	archiveBaseName.set("ecuadorcuentamov")
+}
 
 configurations {
 	compileOnly {
@@ -39,4 +42,7 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+tasks.withType(Jar).configureEach {
+	archiveBaseName.set("ecuadorcuentamov")
 }
