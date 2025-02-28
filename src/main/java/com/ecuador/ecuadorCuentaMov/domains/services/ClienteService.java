@@ -21,12 +21,21 @@ public class ClienteService {
         try {
             return restTemplate.getForObject(url, ClienteDTO.class);
         } catch (Exception e) {
-            throw new RuntimeException("Error al obtener cliente: " + e.getMessage());
+            throw new RuntimeException("Error al obtener cliente: " + nombre +" "+ e.getMessage());
+        }
+    }
+
+    public ClienteDTO buscarClientePorIdentificacion(String identificacion) {
+        String url = clienteServiceUrl + "/identificacion/" + identificacion;
+        try {
+            return restTemplate.getForObject(url, ClienteDTO.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener cliente: " + identificacion +" "+ e.getMessage());
         }
     }
     
     public ClienteDTO buscarClientePorId(Long id) {
-        String url = clienteServiceUrl + "/" + id;
+        String url = clienteServiceUrl + "/id/" + id;
         try {
             return restTemplate.getForObject(url, ClienteDTO.class);
         } catch (Exception e) {

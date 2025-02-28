@@ -17,4 +17,5 @@ public interface CuentaRepository extends JpaRepository<Cuenta, Long> {
     
     boolean existsByNumeroCuenta(String numeroCuenta);
 
+
 }

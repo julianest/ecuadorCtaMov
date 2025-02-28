@@ -13,6 +13,6 @@ public class CuentaDTO {
     private String tipoCuenta;
     private Double saldoInicial;
     private Boolean estado;
-    private Long clienteId;
+    //private Long clienteId;
     private String clienteNombre;
 }

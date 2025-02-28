@@ -27,7 +27,10 @@ public class Cuenta {
     @Column(nullable = false)
     private Boolean estado;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    @Column(name = "cliente_id", nullable = false)
+    private Long clienteId;
+
+    @Column(name = "cliente_nombre", nullable = false)
+    private String clienteNombre;
+
 }
